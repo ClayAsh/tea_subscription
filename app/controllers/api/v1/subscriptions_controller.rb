@@ -6,8 +6,8 @@ class Api::V1::SubscriptionsController < ApplicationController
   end
 
   def create 
-    customer = Customer.find(params[:customer_id])
-    tea = Tea.find(parms[:tea_id])
+    # customer = Customer.find(params[:customer_id])
+    # tea = Tea.find(params[:tea_id])
     render json: SubscriptionSerializer.new(Subscription.create(subscription_params)), status: :created
   end
 
@@ -18,6 +18,6 @@ class Api::V1::SubscriptionsController < ApplicationController
   private 
 
   def subscription_params
-    params.require(:subscription).permit(:title, :price, :status, :frequency, :tea_id, :customer_id)
+    params.permit(:title, :price, :status, :frequency, :tea_id, :customer_id)
   end
 end
