@@ -28,4 +28,39 @@ RSpec.describe "Subscription endpoints" do
     expect(first[:attributes][:tea_id]).to eq(tea.id)
     expect(first[:attributes][:customer_id]).to eq(customer.id)
   end
+
+  it 'can create new subscription' do 
+    customer = create(:customer)
+    tea = create(:tea)
+    
+    subscription_params = { 
+                        customer_id: customer.id, 
+                        tea_id: tea.id,
+                         title: "Professional",
+                         price: 17.89,
+                         status: "Active",
+                         frequency: "Annual"
+                      }
+
+    post '/api/v1/subscriptions', params: subscription_params
+
+    subscription = JSON.parse(response.body, symbolize_names: true)
+    # require 'pry'; binding.pry
+
+    expect(response).to be_successful 
+    expect(subscription).to be_a(Hash)
+
+    expect(subscription[:data]).to include(:id)
+    expect(subscription[:data]).to include(:type)
+    expect(subscription[:data]).to include(:attributes)
+
+    attributes = subscription[:data][:attributes]
+
+    expect(attributes).to include(:title)
+    expect(attributes).to include(:price)
+    expect(attributes).to include(:status)
+    expect(attributes).to include(:frequency)
+    expect(attributes).to include(:tea_id)
+    expect(attributes).to include(:customer_id)
+  end
 end
