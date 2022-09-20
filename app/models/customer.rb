@@ -3,6 +3,6 @@ class Customer < ApplicationRecord
                         :last_name,
                         :email,
                         :address 
-  has_many :tea_customers 
+  has_many :subscriptions 
   # has_many :teas, through: :tea_customers
 end
