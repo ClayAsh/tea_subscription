@@ -12,7 +12,12 @@ class Api::V1::SubscriptionsController < ApplicationController
   end
 
   def update
-    #find subscription where customer id && tea id, change status to "Cancelled"
+    subscription = Subscription.find(params[:id])
+    if subscription.update(subscription_params)
+      render json: SubscriptionSerializer.new(subscription)
+    else 
+      render status: 404
+    end 
   end
 
   private 
