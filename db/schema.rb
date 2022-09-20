@@ -29,7 +29,7 @@ ActiveRecord::Schema.define(version: 2022_09_19_205654) do
     t.bigint "customer_id"
     t.string "title"
     t.float "price"
-    t.string "status", default: "Inactive"
+    t.string "status", default: "Active"
     t.string "frequency"
     t.index ["customer_id"], name: "index_subscriptions_on_customer_id"
     t.index ["tea_id"], name: "index_subscriptions_on_tea_id"

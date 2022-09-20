@@ -69,7 +69,7 @@ RSpec.describe "Subscription endpoints" do
     tea = create(:tea)
     subscription = create(:subscription, customer_id: customer.id, tea_id: tea.id)
 
-    expect(subscription[:status]).to eq("Inactive")
+    expect(subscription[:status]).to eq("Active")
 
     patch '/api/v1/subscriptions/cancel', params: { id: subscription.id, status: "Canceled" } 
 
@@ -92,6 +92,15 @@ RSpec.describe "Subscription endpoints" do
     expect(attributes).to include(:frequency)
     expect(attributes).to include(:tea_id)
     expect(attributes).to include(:customer_id)
+  end
 
+  it 'can render error code for update' do 
+    customer = create(:customer)
+    tea = create(:tea)
+    subscription = create(:subscription, customer_id: customer.id, tea_id: tea.id)
+
+    patch '/api/v1/subscriptions/cancel', params: { id: subscription.id, status: nil } 
+
+    expect(response.status).to eq(404)
   end
 end
