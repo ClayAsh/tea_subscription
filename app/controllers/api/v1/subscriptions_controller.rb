@@ -6,7 +6,11 @@ class Api::V1::SubscriptionsController < ApplicationController
   end
 
   def create 
-    render json: SubscriptionSerializer.new(Subscription.create(subscription_params)), status: :created
+    if Customer.find(params[:customer_id]) && Tea.find(params[:tea_id])
+      render json: SubscriptionSerializer.new(Subscription.create(subscription_params)), status: :created
+    else
+      render status: 404
+    end 
   end
 
   def update
