@@ -1,14 +1,14 @@
 require 'rails_helper'
 
 RSpec.describe "Subscription endpoints" do 
-  it 'can list all subscriptions' do 
+  it 'can list all subscriptions of one customer' do 
     customer = create(:customer)
     customer2 = create(:customer)
-
     tea = create(:tea)
     create_list(:subscription, 5, customer_id: customer.id, tea_id: tea.id)
+    create_list(:subscription, 5, customer_id: customer2.id, tea_id: tea.id)
 
-    get '/api/v1/subscriptions', params: { customer_id: customer.id }
+    get '/api/v1/customer/subscriptions', params: { customer_id: customer.id }
 
     subscriptions = JSON.parse(response.body, symbolize_names: true)
 
@@ -33,7 +33,6 @@ RSpec.describe "Subscription endpoints" do
   it 'can create new subscription' do 
     customer = create(:customer)
     tea = create(:tea)
-    
     subscription_params = { 
                         customer_id: customer.id, 
                         tea_id: tea.id,
@@ -64,6 +63,25 @@ RSpec.describe "Subscription endpoints" do
     expect(attributes).to include(:customer_id)
   end
 
+  it 'has error code for wrong customer id for new subscription' do 
+    tea = create(:tea)
+    subscription_params = { 
+                        customer_id: 1, 
+                        tea_id: tea.id,
+                         title: "Professional",
+                         price: 17.89,
+                         status: "Active",
+                         frequency: "Annual"
+                      }
+
+    post '/api/v1/subscriptions', params: subscription_params
+
+    response_body = JSON.parse(response.body, symbolize_names: true)
+
+    expect(response.status).to eq(404) 
+    expect(response_body[:message]).to eq("Couldn't find Customer with 'id'=1") 
+  end 
+
   it 'can cancel subscription' do 
     customer = create(:customer)
     tea = create(:tea)
@@ -93,6 +111,16 @@ RSpec.describe "Subscription endpoints" do
     expect(attributes).to include(:tea_id)
     expect(attributes).to include(:customer_id)
   end
+
+  it 'can return error for bad subscription id in cancel subscription' do 
+
+    patch '/api/v1/subscriptions/cancel', params: { id: 1, status: "Canceled" } 
+
+    response_body = JSON.parse(response.body, symbolize_names: true)
+
+    expect(response.status).to eq(404) 
+    expect(response_body[:message]).to eq("Couldn't find Subscription with 'id'=1")
+  end 
 
   it 'can render error code for update' do 
     customer = create(:customer)

@@ -5,7 +5,9 @@ Rails.application.routes.draw do
 
       patch '/subscriptions/cancel', to: 'subscriptions#update' 
 
-      resources :subscriptions, only: %i[index create] 
+      get '/customer/subscriptions', to: 'subscriptions#index'
+# make index a customer resource 
+      resources :subscriptions, only: %i[create] 
     end
   end
 end
